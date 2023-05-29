@@ -30,20 +30,30 @@ class GridApi:
         time.sleep(1)
         return response.status_code, response.json()
     
-    def delete_session(self, session_id:str) -> None:
+    def delete_session(self, session_id:str=None) -> None:
+        """
+            If session_id is None, all sessions will be deleted
+        """
         status = self.get_status()
         if status:
             for node in status['nodes']:
                 for slot in node['slots']:
                     session = slot.get('session', None)
                     if session:
-                        if session_id == session['sessionId']:
+
+                        if session_id == session['sessionId'] or session_id is None:
 
                             node_uri = session.get('uri', None)
                             if not node_uri:
                                 node_uri = node['uri']
                             requests.delete(f'{node_uri}/se/grid/node/session/{session_id}', headers=self._headers)
-                            return
+                            
+                            if not session_id is None: return
+                        
+    def delete_sessions(self) -> None:
+        self.delete_session()
                     
+    def kill_all_sessions(self) -> None:
+        self.delete_session()
 
 
