@@ -46,6 +46,3 @@ class StatusResponse(TypedDict):
     ready: bool
     nodes: List[Node]
     message: str
-
-class QueueResponse(BaseResponse):
-    value: List[dict]

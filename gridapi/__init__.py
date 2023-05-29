@@ -1,10 +1,9 @@
 import requests, time
 from requests.structures import CaseInsensitiveDict
-from typing import Union, Tuple
+from typing import Union, Tuple, List
 from .types import (
     StatusResponse,
     BaseResponse,
-    QueueResponse
 )
 
 class GridApi:
@@ -21,9 +20,9 @@ class GridApi:
             response = response.json()
             return response.get('value', None)
         
-    def get_queue(self) -> Tuple[int, QueueResponse]:
+    def get_queue(self) -> Tuple[int, List[dict]]:
         response = requests.get(f'{self.GRID_URL}/se/grid/newsessionqueue/queue', headers=self._headers)
-        return response.status_code, response.json()
+        return response.status_code, response.json()['value']
         
     def clear_queue(self) -> Tuple[int, BaseResponse]:
         response = requests.delete(f'{self.GRID_URL}/se/grid/newsessionqueue/queue', headers=self._headers)
@@ -55,5 +54,17 @@ class GridApi:
                     
     def kill_all_sessions(self) -> None:
         self.delete_session()
+
+    def count_sessions(self) -> int:
+        count = 0
+        status = self.get_status()
+        if status:
+
+            for node in status['nodes']:
+                for slot in node['slots']:
+                    if slot.get('session', False):
+                        count += 1
+
+        return count
 
 
