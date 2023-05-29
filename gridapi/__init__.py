@@ -43,5 +43,7 @@ class GridApi:
                             if not node_uri:
                                 node_uri = node['uri']
                             requests.delete(f'{node_uri}/se/grid/node/session/{session_id}', headers=self._headers)
+                            return
+                    
 
 
