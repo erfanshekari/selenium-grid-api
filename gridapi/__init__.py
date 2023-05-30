@@ -41,11 +41,13 @@ class GridApi:
                     if session:
 
                         if session_id == session['sessionId'] or session_id is None:
-
+                            session_id_ = session_id
+                            if not session_id_:
+                                session_id_ = session['sessionId']
                             node_uri = session.get('uri', None)
                             if not node_uri:
                                 node_uri = node['uri']
-                            requests.delete(f'{node_uri}/se/grid/node/session/{session_id}', headers=self._headers)
+                            requests.delete(f'{node_uri}/se/grid/node/session/{session_id_}', headers=self._headers)
                             
                             if not session_id is None: return
                         
